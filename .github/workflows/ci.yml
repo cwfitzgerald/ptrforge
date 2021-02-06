@@ -21,41 +21,14 @@ jobs:
     - name: Set up Rust toolchain
       run: |
         rustup default ${{ matrix.rust_version }}
-        rustup component add clippy
+        rustup component add clippy rustfmt
 
     - name: Build and test
       run: |
-        cargo build --verbose
-        cargo test --verbose
-
-    - name: Build and test (all features)
-      run: |
-        cargo build --verbose --all-features
-        cargo test --verbose --all-features
-
-    - name: Build and test (no features)
-      run: |
-        cargo build --verbose --no-default-features
-        cargo test --verbose --no-default-features
-
-    - name: Clippy
-      run: |
-        cargo clippy -- -D warnings
-      if: matrix.rust_version == 'stable'
-
-  cargo-fmt:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Rust toolchain
-        run: |
-          rustup default nightly
-          rustup component add rustfmt
-
-      - name: Rustfmt
-        run: |
-          cargo fmt -- --check
+        cargo fmt -- --check
+        cargo clippy --test
+        cargo build
+        cargo test
 
   cargo-deny:
     runs-on: ubuntu-latest
